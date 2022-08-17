@@ -1,11 +1,13 @@
 import torch
-from src.models.components import get_backbone, get_rpn, get_fastercnn_roi_head, AVAILABLE_BACKBONES
+from src.models.common import get_backbone, get_rpn, AVAILABLE_BACKBONES
+from src.models.FasterRCNN import get_fastercnn_roi_head
 from torchvision.models.detection.image_list import ImageList
 
 from collections import OrderedDict
 
 # fix seed for testing
 torch.manual_seed(0)
+
 
 ### TEST COMPONENTS ###
 def test_backbones():
@@ -34,7 +36,7 @@ def test_rpn():
     backbone = get_backbone('resnet50', 6)
     anchor_sizes = ((4,), (8,), (16,), (32,), (64,))
     aspect_ratios = ((0.5, 1.0, 2.0),) * len(anchor_sizes)
-    rpn = get_rpn(anchor_sizes, aspect_ratios, post_nms_top_n_train=20)
+    rpn = get_rpn(anchor_sizes=anchor_sizes, aspect_ratios=aspect_ratios, post_nms_top_n_train=20)
 
     # build input
     img = torch.randn(1, 6, 128, 128)
@@ -46,6 +48,7 @@ def test_rpn():
     )
 
     boxes, losses = rpn(img_list, features, [targets])
+
     assert list(boxes[0].shape) == [20, 4]
     assert 'loss_objectness' in losses
     assert 'loss_rpn_box_reg' in losses
@@ -85,7 +88,9 @@ def test_fastercnn_roi_head():
     assert 'labels' in results[0]
     assert 'scores' in results[0]
 
+
 if __name__ == "__main__":
     test_backbones()
     test_rpn()
     test_fastercnn_roi_head()
+
