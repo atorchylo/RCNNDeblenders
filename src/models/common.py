@@ -28,7 +28,7 @@ def get_backbone(name='resnet50', input_channels=None):
 
 def get_rpn(
         # Anchor parameters
-        anchor_sizes=((4,), (8,), (16,), (32,), (64,)),
+        anchor_sizes=((8,), (16,), (32,), (64,), (128,)),
         aspect_ratios=((0.5, 1.0, 2.0),) * 5,
         # RPN parameters
         pre_nms_top_n_train=2000,

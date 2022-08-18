@@ -1,6 +1,10 @@
 # custom
+trash.py
+raw_data/
+notebooks/
+.DS_Store
 .idea/
-torcvision.ipynb
+notebooks/torcvision.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

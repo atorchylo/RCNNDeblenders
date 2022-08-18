@@ -93,4 +93,3 @@ if __name__ == "__main__":
     test_backbones()
     test_rpn()
     test_fastercnn_roi_head()
-

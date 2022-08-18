@@ -1,5 +1,4 @@
 """Config setup architecture"""
-# TODO refactor
 import json
 
 
@@ -20,7 +19,7 @@ class BaseConfig:
 
 
 class ImagesConfig(BaseConfig):
-    in_channels = 6
+    in_channels = 5
     num_classes = 2  # galaxy + background
     img_resolution = (128, 128)
 
@@ -31,7 +30,7 @@ class BackboneConfig(BaseConfig):
 
 
 class RPNConfig(BaseConfig):
-    anchor_sizes = ((4,), (8,), (16,), (32,), (64,))
+    anchor_sizes = ((8,), (16,), (32,), (64,), (128,))
     aspect_ratios = ((0.5, 1.0, 2.0),) * len(anchor_sizes)
     pre_nms_top_n_train = 2000
     pre_nms_top_n_test = 1000
