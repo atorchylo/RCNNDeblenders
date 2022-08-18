@@ -7,7 +7,7 @@ from typing import Any
 import torch
 
 
-class CosmosHCS(DatasetBase):
+class CosmosHSC(DatasetBase):
     def __init__(self, path: str, normalizer: Normalizer = LinearNormCosmos):
         data = load_blend_results(path, 'HSC')
         self.images = data['blend_images']
@@ -49,7 +49,7 @@ class CosmosHCS(DatasetBase):
 
     def _transform_all(self, image: Any, target_dict: TargetDict) -> ImageTargetTuple:
         image_normalized = self.normalizer.forward(image)
-        image_tensor = torch.tensor(image_normalized)
+        image_tensor = torch.tensor(image_normalized, dtype=torch.float32)
         return image_tensor, target_dict
 
     def __len__(self) -> int:

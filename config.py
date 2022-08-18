@@ -26,7 +26,7 @@ class ImagesConfig(BaseConfig):
 
 class BackboneConfig(BaseConfig):
     name = "resnet50"
-    input_channels = 6
+    input_channels = 5
 
 
 class RPNConfig(BaseConfig):

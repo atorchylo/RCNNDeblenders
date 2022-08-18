@@ -1,14 +1,18 @@
 from .common import get_backbone, get_rpn
 
+import torch
 import pytorch_lightning as pl
 
 from torchvision.models.detection.roi_heads import RoIHeads
 from torchvision.ops import MultiScaleRoIAlign
+from torch.optim import SGD, Optimizer
 from torchvision.models.detection.faster_rcnn import TwoMLPHead, FastRCNNPredictor
 from torchvision.models.detection.generalized_rcnn import GeneralizedRCNN
+from torchvision.models.detection.transform import GeneralizedRCNNTransform
 
 from config import BackboneConfig, RPNConfig, ROIBoxHeadConfig
 from typing import Dict, Optional
+from src.data.base.types import CollatedBatchType
 
 
 def get_fastercnn_roi_head(
@@ -83,13 +87,25 @@ class FasterRCNN(pl.LightningModule):
         if rpn_config is None:
             rpn_config = RPNConfig()._to_dict()
         if roi_box_head_config is None:
-            roi_box_head_config = ROIBoxHeadConfig._to_dict()
+            roi_box_head_config = ROIBoxHeadConfig()._to_dict()
 
         # construct components from configuration
-        backbone = get_backbone(**backbone_config)
-        rpn = get_rpn(**rpn_config)
-        roi_head = get_fastercnn_roi_head(**roi_box_head_config)
-
+        self.backbone = get_backbone(**backbone_config)
+        self.rpn = get_rpn(**rpn_config)
+        self.roi_head = get_fastercnn_roi_head(**roi_box_head_config)
+        self.transform = GeneralizedRCNNTransform(128, 128, [0], [1])
         # build the final model
-        # TODO implement transform module
-        self.model = GeneralizedRCNN(backbone, rpn, roi_head, transform=None)
+        self.model = GeneralizedRCNN(self.backbone, self.rpn, self.roi_head, self.transform)
+
+    def configure_optimizers(self) -> Optimizer:
+        return SGD(self.parameters(), lr=0.005, momentum=0.9, weight_decay=1e-4)
+
+    def training_step(self, batch: CollatedBatchType, batch_idx: int = 0) -> torch.Tensor:
+        images, targets = batch
+        loss_dict = self.model(images, targets)
+        for name, value in loss_dict.items():
+            self.log(name, value, prog_bar=True, logger=True, on_step=True)
+
+        loss = sum(loss_dict.values())
+        self.log("total_loss", loss, prog_bar=True, logger=True, on_step=True)
+        return loss
