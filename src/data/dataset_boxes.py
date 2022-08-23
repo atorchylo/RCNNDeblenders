@@ -53,4 +53,4 @@ class DatasetBoxes(DatasetBase):
         return image_tensor, target_dict
 
     def __len__(self) -> int:
-        return self.image_files.shape[0]
+        return len(self.image_files)

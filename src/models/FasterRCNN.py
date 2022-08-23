@@ -1,3 +1,4 @@
+from config import BackboneConfig, RPNConfig, ROIBoxHeadConfig # TODO FIX CONFIGS
 from .common import get_backbone, get_rpn
 
 import torch
@@ -6,15 +7,15 @@ import pytorch_lightning as pl
 
 from torchvision.models.detection.roi_heads import RoIHeads
 from torchvision.ops import MultiScaleRoIAlign
-from torch.optim import Adam, SGD, Optimizer
+from torch.optim import Adam, Optimizer
 from torchvision.models.detection.faster_rcnn import TwoMLPHead, FastRCNNPredictor
 from torchvision.models.detection.generalized_rcnn import GeneralizedRCNN
 from torchvision.models.detection.transform import GeneralizedRCNNTransform
 
-from config import BackboneConfig, RPNConfig, ROIBoxHeadConfig
-from typing import Dict, Optional, List, Tuple
-from src.data.base.types import CollatedBatchType
 
+from typing import Dict, Optional, List, Tuple
+from src.data import CollatedBatchType
+from src.utils.plot_utils import plot_batch
 from torchmetrics.detection.mean_ap import MeanAveragePrecision
 
 
@@ -78,11 +79,11 @@ def get_fastercnn_roi_head(
 
 class FasterRCNN(pl.LightningModule):
     def __init__(
-            self,
-            backbone_config: Optional[Dict] = None,
-            rpn_config: Optional[Dict] = None,
-            roi_box_head_config: Optional[Dict] = None,
-            lr=5e-5
+        self,
+        backbone_config: Optional[Dict] = None,
+        rpn_config: Optional[Dict] = None,
+        roi_box_head_config: Optional[Dict] = None,
+        lr=5e-5
     ):
         super().__init__()
         # set up configs
@@ -102,13 +103,12 @@ class FasterRCNN(pl.LightningModule):
         self.model = GeneralizedRCNN(backbone, rpn, roi_head, transform)
         self.metric = MeanAveragePrecision()
         self.learning_rate = lr
-    
+
     def forward(self, images: List[Tensor], targets: Optional[List[Dict[str, Tensor]]] = None
     ) -> Tuple[Dict[str, Tensor], List[Dict[str, Tensor]]]:
         return self.model(images, targets)
 
     def configure_optimizers(self) -> Optimizer:
-        #return SGD(self.model.parameters(), lr=self.learning_rate, momentum=0.9, weight_decay=1e-4)
         return Adam(self.model.parameters(), lr=self.learning_rate, betas=(0.9, 0.999), weight_decay=0.0005)
 
     def training_step(self, batch: CollatedBatchType, batch_idx: int = 0) -> torch.Tensor:
@@ -126,9 +126,14 @@ class FasterRCNN(pl.LightningModule):
         images, targets = batch
         preds = self(images)
         self.metric.update(preds, targets)
+        if batch_idx == 0:
+            plot_img = plot_batch(images, targets, preds, num=5)
+            self.logger.experiment.add_image('images', plot_img, self.current_epoch, dataformats="HWC")
+
 
     def validation_epoch_end(self, outputs):
         map_metrics = self.metric.compute()
         for name, value in map_metrics.items():
             self.log(f'map/{name}', value, logger=True, on_epoch=True)
         self.metric.reset()
+
