@@ -79,7 +79,9 @@ def plot_with_bboxes(image, img_bands=None, truth_boxes=None, predicted_boxes=No
                      color='white', verticalalignment='top',
                      bbox={'color': 'red', 'pad': 0})
     plt.tight_layout()
-    return fig2img(fig)
+    plot = fig2img(fig)
+    plt.close(fig)
+    return plot
 
 
 def plot_batch(images, targets, preds, num=4):
