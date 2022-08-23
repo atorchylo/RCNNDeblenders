@@ -1,4 +1,5 @@
 # custom
+lightning_logs/
 trash.py
 raw_data/
 notebooks/

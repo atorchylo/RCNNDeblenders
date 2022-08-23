@@ -8,7 +8,7 @@ import torch
 import os
 
 
-class BoxedDataset(DatasetBase):
+class DatasetBoxes(DatasetBase):
     def __init__(self, file_path: str, normalizer: Normalizer = LinearNormCosmos()):
         self._prepare_filenames(file_path)
         self.normalizer = normalizer
