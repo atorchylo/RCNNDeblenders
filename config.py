@@ -32,14 +32,14 @@ class BackboneConfig(BaseConfig):
 class RPNConfig(BaseConfig):
     anchor_sizes = ((8,), (16,), (32,), (64,), (128,))
     aspect_ratios = ((0.5, 1.0, 2.0),) * len(anchor_sizes)
-    pre_nms_top_n_train = 2000
-    pre_nms_top_n_test = 1000
-    post_nms_top_n_train = 2000
-    post_nms_top_n_test = 1000
+    pre_nms_top_n_train = 200
+    pre_nms_top_n_test = 100
+    post_nms_top_n_train = 160
+    post_nms_top_n_test = 80
     nms_thresh = 0.7
     fg_iou_thresh = 0.7
     bg_iou_thresh = 0.3
-    batch_size_per_image = 128
+    batch_size_per_image = 48
     positive_fraction = 0.5
     score_thresh = 0.0
 
@@ -48,10 +48,10 @@ class ROIBoxHeadConfig(BaseConfig):
     output_pool_size = 7
     score_thresh = 0.05
     nms_thresh = 0.5
-    detections_per_img = 100
+    detections_per_img = 24
     fg_iou_thresh = 0.5
     bg_iou_thresh = 0.5
-    batch_size_per_image = 512
+    batch_size_per_image = 24
     positive_fraction = 0.25
     bbox_reg_weights = None
 
