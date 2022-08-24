@@ -14,8 +14,8 @@ from torchvision.models.detection.transform import GeneralizedRCNNTransform
 
 
 from typing import Dict, Optional, List, Tuple
-from src.data import CollatedBatchType
-from src.utils.plot_utils import plot_batch
+from data import CollatedBatchType
+from utils.plot_utils import plot_batch
 from torchmetrics.detection.mean_ap import MeanAveragePrecision
 
 

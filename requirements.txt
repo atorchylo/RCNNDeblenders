@@ -1,0 +1,8 @@
+blending-toolkit==1.0.0a2
+Pillow==9.2.0
+torch==1.12.1
+torchmetrics==0.9.3
+torchvision==0.13.1
+pytorch_lightning==1.7.1
+numpy==1.23.1
+matplotlib==3.5.2

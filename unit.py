@@ -1,6 +1,6 @@
 import torch
-from src.models.common import get_backbone, get_rpn, AVAILABLE_BACKBONES
-from src.models.FasterRCNN import get_fastercnn_roi_head
+from models.common import get_backbone, get_rpn, AVAILABLE_BACKBONES
+from models.FasterRCNN import get_fastercnn_roi_head
 from torchvision.models.detection.image_list import ImageList
 
 from collections import OrderedDict

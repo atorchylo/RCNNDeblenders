@@ -1,7 +1,7 @@
 import os
 import btk
 import numpy as np
-from src.utils.ellipse_utils import moment
+from utils.ellipse_utils import moment
 
 COSMOS_CATALOG_PATHS = [
     'raw_data/catalogs/cosmos/real_galaxy_catalog_26_extension_example.fits',
@@ -35,6 +35,7 @@ def generate_cosmos_HSC(
         add_noise='all',
         verbose=False,
         gal_type='real',
+        seed=1234
     )
 
     # iterate and save

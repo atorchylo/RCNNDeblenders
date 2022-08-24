@@ -1,5 +1,5 @@
-from src.models.FasterRCNN import FasterRCNN
-from src.data import DatasetBoxes, collate_fn
+from models.FasterRCNN import FasterRCNN
+from data import DatasetBoxes, collate_fn
 from torch.utils.data import DataLoader
 
 from config import BackboneConfig, RPNConfig, ROIBoxHeadConfig
@@ -20,5 +20,5 @@ train_dl = DataLoader(train_dataset, batch_size=10, collate_fn=collate_fn, shuff
 valid_dl = DataLoader(valid_dataset, batch_size=10, collate_fn=collate_fn)
 
 # train!
-trainer = pl.Trainer(log_every_n_steps=1)  # for validation: val_check_interval=1.0, )
+trainer = pl.Trainer(log_every_n_steps=5, max_epochs=100)  # for validation: val_check_interval=1.0, )
 trainer.fit(model, train_dl, valid_dl)
