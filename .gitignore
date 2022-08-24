@@ -1,4 +1,6 @@
 # custom
+jobs/
+*.sh
 lightning_logs/
 trash.py
 raw_data/
