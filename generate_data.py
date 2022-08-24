@@ -59,8 +59,8 @@ def generate_cosmos_HSC(
                     Iyy = moment(galaxy, 0, 2)
                     # get box coordinates
                     x, y = blend_list[idx]['x_peak', 'y_peak']
-                    x1, x2 = x - Ixx, x + Ixx
-                    y1, y2 = y - Iyy, y + Iyy
+                    x1, x2 = x - Ixx ** (1/2), x + Ixx ** (1/2)
+                    y1, y2 = y - Iyy ** (1/2), y + Iyy ** (1/2)
                     boxes.append((x1, y1, x2, y2))
                 boxes = np.array(boxes)
 
