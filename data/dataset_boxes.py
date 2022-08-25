@@ -33,7 +33,7 @@ class DatasetBoxes(DatasetBase):
 
     def load_target_dict(self, index: int) -> TargetDict:
         boxes = np.load(self.target_files[index])
-        boxes = torch.tensor(boxes)
+        boxes = torch.tensor(boxes, dtype=torch.float32)
         area = (boxes[:, 3] - boxes[:, 1]) * (boxes[:, 2] - boxes[:, 0])
         labels = torch.ones((boxes.shape[0],), dtype=torch.int64)
         image_id = torch.tensor([index])
