@@ -87,6 +87,10 @@ def plot_with_bboxes(image, img_bands=None, truth_boxes=None, predicted_boxes=No
 def plot_batch(images, targets, preds, num=4):
     """Wrapper around plot_with_bboxes to plot multiple images"""
     plots = []
+    # if batch_size < number of images we want to plot
+    if len(preds) < num:
+        num = len(preds)
+
     for i in range(num):
         image = images[i].detach().numpy()
         bands = [0, 2, 3]
