@@ -82,12 +82,12 @@ def cpu_batch_optimization_search(file_path, save_path):
     """Simple search for optimal params"""
     import time
     results = []
-    for b in [16, 32, 64, 128]:
-        for n in [1, 2, 4, 8]:
+    for b in [64, 128, 256, 512]:
+        for n in [1, 2, 4, 8, 16, 32]:
             start = time.time()
             generate_cosmos_HSC(
                 file_path,
-                num_images=256,
+                num_images=512,
                 num_cpus=n,
                 save_path=save_path,
                 batch_size=b,
