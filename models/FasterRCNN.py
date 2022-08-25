@@ -1,8 +1,6 @@
 from config import BackboneConfig, RPNConfig, ROIBoxHeadConfig # TODO FIX CONFIGS
 from models.common import get_backbone, get_rpn
-
 from torch import nn
-from torch import Tensor
 
 from torchvision.models.detection.roi_heads import RoIHeads
 from torchvision.ops import MultiScaleRoIAlign
@@ -10,7 +8,7 @@ from torchvision.models.detection.faster_rcnn import TwoMLPHead, FastRCNNPredict
 from torchvision.models.detection.generalized_rcnn import GeneralizedRCNN
 from torchvision.models.detection.transform import GeneralizedRCNNTransform
 
-from typing import Dict, Optional, List, Tuple
+from typing import Dict, Optional, Tuple
 
 
 def get_fastercnn_roi_head(

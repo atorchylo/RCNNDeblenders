@@ -92,11 +92,11 @@ def plot_batch(images, targets, preds, num=4):
         num = len(preds)
 
     for i in range(num):
-        image = images[i].detach().numpy()
+        image = images[i].detach().cpu().numpy()
         bands = [0, 2, 3]
-        truth_boxes = targets[i]['boxes'].detach().numpy()
-        predicted_boxes = preds[i]['boxes'].detach().numpy()
-        predicted_scores = preds[i]['scores'].detach().numpy()
+        truth_boxes = targets[i]['boxes'].detach().cpu().numpy()
+        predicted_boxes = preds[i]['boxes'].detach().cpu().numpy()
+        predicted_scores = preds[i]['scores'].detach().cpu().numpy()
         plot = plot_with_bboxes(image, bands, truth_boxes, predicted_boxes, predicted_scores)
         plots.append(np.array(plot))
     return np.hstack(plots)

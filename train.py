@@ -19,6 +19,7 @@ class Model(pl.LightningModule):
             rcnn_model,
             train_dataset,
             valid_dataset,
+            num_workers=0,
             batch_size=32,
             learning_rate=5e-5
     ):
@@ -65,10 +66,12 @@ class Model(pl.LightningModule):
         self.metric.reset()
 
     def train_dataloader(self):
-        return DataLoader(self.train_dataset, batch_size=self.batch_size, collate_fn=collate_fn, shuffle=True)
+        return DataLoader(self.train_dataset, num_workers=self.num_workers, batch_size=self.batch_size,
+                          collate_fn=collate_fn, shuffle=True)
 
     def val_dataloader(self):
-        return DataLoader(self.valid_dataset, batch_size=self.batch_size, collate_fn=collate_fn)
+        return DataLoader(self.valid_dataset, num_workers=self.num_workers, batch_size=self.batch_size,
+                          collate_fn=collate_fn)
 
 
 def parse():
@@ -89,6 +92,9 @@ def parse():
 
     parser.add_argument("--train_gpu", type=bool, default=False,
                         help="Train on max number of GPU")
+
+    parser.add_argument("--num_workers", type=int, default=0,
+                        help="Number of workers for data loading")
 
     parser.add_argument("--train_mps", type=bool, default=False,
                         help="Train on max number of Apple’s Metal Performance Shaders (MPS)")
@@ -114,7 +120,7 @@ if __name__ == "__main__":
     valid_dataset = DatasetBoxes(args.valid_path)
 
     # wrap in pt_lightning model
-    model = Model(rcnn_model, train_dataset, valid_dataset)
+    model = Model(rcnn_model, train_dataset, valid_dataset, num_workers=args.num_workers)
 
     # train!
     auto_scale_batch_size = True if args.optimize_bs else None
@@ -137,7 +143,7 @@ if __name__ == "__main__":
         max_epochs=100,
         default_root_dir=args.save_path,
         auto_scale_batch_size=auto_scale_batch_size,
-        auto_lr_find=auto_lr_find
+        auto_lr_find=auto_lr_find,
     )
 
     if args.optimize_bs or args.optimize_lr:
