@@ -137,17 +137,21 @@ if __name__ == "__main__":
     auto_lr_find = True if args.optimize_lr else None
     if args.train_gpu:
         accelerator = 'gpu'
+        strategy = 'dp'
         devices = -1
     elif args.train_mps:
         accelerator = 'mps'
+        strategy = None
         devices = -1
     else:
         accelerator = 'cpu'
+        strategy = None
         devices = 1
 
     trainer = pl.Trainer(
         accelerator=accelerator,
         devices=devices,
+        strategy=strategy,
         log_every_n_steps=5,
         val_check_interval=1.0,
         max_epochs=100,
