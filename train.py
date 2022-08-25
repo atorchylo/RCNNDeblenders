@@ -97,9 +97,6 @@ def parse():
     parser.add_argument("--num_workers", type=int, default=0,
                         help="Number of workers for data loading")
 
-    parser.add_argument("--train_mps", type=bool, default=False,
-                        help="Train on max number of Apple’s Metal Performance Shaders (MPS)")
-
     parser.add_argument("--batch_size", type=int, default=32,
                         help="batch size for training")
 
@@ -135,23 +132,10 @@ if __name__ == "__main__":
     # train!
     auto_scale_batch_size = True if args.optimize_bs else None
     auto_lr_find = True if args.optimize_lr else None
-    if args.train_gpu:
-        accelerator = 'gpu'
-        strategy = 'dp'
-        devices = -1
-    elif args.train_mps:
-        accelerator = 'mps'
-        strategy = None
-        devices = -1
-    else:
-        accelerator = 'cpu'
-        strategy = None
-        devices = 1
+    accelerator = 'gpu' if args.train_gpu else 'cpu'
 
     trainer = pl.Trainer(
         accelerator=accelerator,
-        devices=devices,
-        strategy=strategy,
         log_every_n_steps=5,
         val_check_interval=1.0,
         max_epochs=100,
