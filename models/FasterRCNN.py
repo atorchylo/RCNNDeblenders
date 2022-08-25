@@ -1,4 +1,4 @@
-from config import BackboneConfig, RPNConfig, ROIBoxHeadConfig # TODO FIX CONFIGS
+from config import ImagesConfig, BackboneConfig, RPNConfig, ROIBoxHeadConfig # TODO FIX CONFIGS
 from models.common import get_backbone, get_rpn
 from torch import nn
 
@@ -72,11 +72,14 @@ def get_fastercnn_roi_head(
 class FasterRCNN(GeneralizedRCNN, nn.Module):
     def __init__(
             self,
+            images_config: Optional[Dict] = None,
             backbone_config: Optional[Dict] = None,
             rpn_config: Optional[Dict] = None,
             roi_box_head_config: Optional[Dict] = None
     ):
         # set up configs
+        if images_config is None:
+            images_config = ImagesConfig()._to_dict()
         if backbone_config is None:
             backbone_config = BackboneConfig()._to_dict()
         if rpn_config is None:
@@ -88,6 +91,12 @@ class FasterRCNN(GeneralizedRCNN, nn.Module):
         backbone = get_backbone(**backbone_config)
         rpn = get_rpn(**rpn_config)
         roi_head = get_fastercnn_roi_head(**roi_box_head_config)
-        transform = GeneralizedRCNNTransform(128, 128, [0], [1])
+        # upscales image and boxes to size im images_config
+        transform = GeneralizedRCNNTransform(
+            min(images_config['img_resolution']),
+            max(images_config['img_resolution']),
+            [0], [1],
+            fixed_size=images_config['img_after_resize']
+        )
         # build the final model
         super().__init__(backbone, rpn, roi_head, transform)
