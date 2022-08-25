@@ -32,6 +32,7 @@ class Model(pl.LightningModule):
         self.metric = MeanAveragePrecision()
         self.learning_rate = learning_rate
         self.batch_size = batch_size
+        self.num_workers = num_workers
 
     def forward(self, images: List[Tensor], targets: Optional[List[Dict[str, Tensor]]] = None
                 ) -> Tuple[Dict[str, Tensor], List[Dict[str, Tensor]]]:
@@ -99,6 +100,12 @@ def parse():
     parser.add_argument("--train_mps", type=bool, default=False,
                         help="Train on max number of Apple’s Metal Performance Shaders (MPS)")
 
+    parser.add_argument("--batch_size", type=int, default=32,
+                        help="batch size for training")
+
+    parser.add_argument("--learning_rate", type=float, default=5e-5,
+                        help="learning rate for training")
+
     parser.add_argument("--optimize_bs", type=bool, default=False,
                         help="Finds the optimal batch size for training")
 
@@ -120,7 +127,10 @@ if __name__ == "__main__":
     valid_dataset = DatasetBoxes(args.valid_path)
 
     # wrap in pt_lightning model
-    model = Model(rcnn_model, train_dataset, valid_dataset, num_workers=args.num_workers)
+    model = Model(rcnn_model, train_dataset, valid_dataset,
+                  num_workers=args.num_workers,
+                  batch_size=args.batch_size,
+                  learning_rate=args.learning_rate)
 
     # train!
     auto_scale_batch_size = True if args.optimize_bs else None
